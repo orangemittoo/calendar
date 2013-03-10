@@ -22,17 +22,8 @@
 				[23]
 			],
 			fMondayArr = [2, 1, 7, 6, 5, 4, 3],
-			src = '<style>table {border-collapse:collapse;border:1px #000 solid;margin-bottom:20px;}th,td{padding:5px;border:1px #000 solid;text-align:center}.weeks {background: #ccc;}.t-sun {color:#f66;}.t-sat {color:#0ff} .t-hol {color:#fff} .t-oth {color:#999}.bg-sun {background:#fcf}.bg-sat {background: #6ff}.bg-hol {background:#f66}</style>',
 			yArr, holidays, holidayObj, len, i , j, k, lenY, lenD, week, day, currentD,
 			targetY, targetM ,prevM, tmpPrevM, isSun, isSat, cName, isOther;
-
-		//10年分の情報を一つの配列に格納
-		//例： [[[2013,1,31,4,0], [2013,1,31,4,0]], [[2013,1,31,4,0], [2013,1,31,4,0]]]
-		//カレンダーの情報
-		//年月
-		//何日までか
-		//何曜日か
-		//祝日か
 
 		for(; sY <= eY; sY++){
 			yArr = [];
@@ -68,11 +59,20 @@
 			allYearArr.push(yArr);
 		}
 
-		//HTML生成
-		//1.一度に文字列を生成してinnnerHTML
-		//2.createElement
+
 		lenY = allYearArr.length;
 		i = 0;
+
+		var document = window.document,
+			createElement = document.createElement, 
+			divElm = createElement.call(document, 'div'),
+			styleElm = createElement.call(document, 'style'),
+			tableElm, trElm, thElm, tdElm, textNode;
+
+		textNode = document.createTextNode('table {border-collapse:collapse;margin-bottom:20px;}th,td{padding:5px;border:1px #000 solid;text-align:center}.weeks {background: #ccc;}.t-sun {color:#f66;}.t-sat {color:#0ff} .t-hol {color:#fff} .t-oth {color:#999}.bg-sun {background:#fcf}.bg-sat {background: #6ff}.bg-hol {background:#f66}');
+		styleElm.appendChild(textNode);
+		document.getElementsByTagName('head')[0].appendChild(styleElm);
+
 		for(; i < lenY; i++){
 			targetY = allYearArr[i];
 			j = 0;
@@ -81,7 +81,59 @@
 				tmpPrevM = targetY[j -1];
 				prevM = tmpPrevM ? tmpPrevM : allYearArr[i -1] ? allYearArr[i -1][11] : [0,0,31];
 				k = 0;
-				src += '<table><tr><th colspan="7">' + targetM[0] + '年' + targetM[1] + '月' + '</th></tr><tr class="weeks"><th class="t-sun">日</th><th>月</th><th>火</th><th>水</th><th>木</th><th>金</th><th class="t-sat">土</th></tr>';
+				// src += '<table><tr><th colspan="7">' + targetM[0] + '年' + targetM[1] + '月' + '</th></tr><tr class="weeks"><th class="t-sun">日</th><th>月</th><th>火</th><th>水</th><th>木</th><th>金</th><th class="t-sat">土</th></tr>';
+				tableElm = createElement.call(document, 'table')
+				trElm = createElement.call(document, 'tr');
+				thElm = createElement.call(document, 'th');
+				thElm.setAttribute('colspan', 7);
+				textNode = document.createTextNode(targetM[0] + '年' + targetM[1] + '月');
+				trElm.appendChild(thElm);
+				thElm.appendChild(textNode);
+
+				tableElm.appendChild(trElm);
+
+				trElm = createElement.call(document, 'tr');
+				trElm.setAttribute('class', 'weeks');
+
+				thElm = createElement.call(document, 'th');
+				thElm.setAttribute('class', 't-sun');
+				textNode = document.createTextNode('日');
+				trElm.appendChild(thElm);
+				thElm.appendChild(textNode);
+
+				thElm = createElement.call(document, 'th');
+				textNode = document.createTextNode('月');
+				trElm.appendChild(thElm);
+				thElm.appendChild(textNode);
+
+				thElm = createElement.call(document, 'th');
+				textNode = document.createTextNode('火');
+				trElm.appendChild(thElm);
+				thElm.appendChild(textNode);
+
+				thElm = createElement.call(document, 'th');
+				textNode = document.createTextNode('水');
+				trElm.appendChild(thElm);
+				thElm.appendChild(textNode);
+
+				thElm = createElement.call(document, 'th');
+				textNode = document.createTextNode('木');
+				trElm.appendChild(thElm);
+				thElm.appendChild(textNode);
+
+				thElm = createElement.call(document, 'th');
+				textNode = document.createTextNode('金');
+				trElm.appendChild(thElm);
+				thElm.appendChild(textNode);
+
+				thElm = createElement.call(document, 'th');
+				thElm.setAttribute('class', 't-sat');
+				textNode = document.createTextNode('土');
+				trElm.appendChild(thElm);
+				thElm.appendChild(textNode);
+
+				tableElm.appendChild(trElm);
+
 
 				lenD = targetM[2];
 				week = targetM[3];
@@ -106,18 +158,23 @@
 					cName = isSun ? 'bg-sun' : isSat ? 'bg-sat' : '';
 					cName += isOther ? ' t-oth' : '';
 					cName += holidays[day] && !isOther ? ' bg-hol t-hol' : '';
-					src += isSun ? '<tr>'+ (cName ? '<td class="'+cName+'">': '<td>') + day + '</td>'+ (isSat ? '</tr>' : '') : (cName ? '<td class="'+cName+'">': '<td>') + day + '</td>' + (isSat ? '</tr>' : '');
-					// src += (cName ? '<td class="'+cName+'">': '<td>') + day + '</td>';
-					// src += isSat ? '</tr>' : '';
+
+					
+					isSun && (trElm = createElement.call(document, 'tr'));
+					tdElm = createElement.call(document, 'td');
+					cName && (tdElm.setAttribute('class', cName));
+					textNode = document.createTextNode(day);
+					trElm.appendChild(tdElm);
+					tdElm.appendChild(textNode);
+					isSat && tableElm.appendChild(trElm);
 				}
 
-				src += '</table>';
+				divElm.appendChild(tableElm);
 			}
 
 		}
-
-		//描画は一度だけ
-		document.getElementsByTagName('body')[0].innerHTML = src;
+		
+		document.body.appendChild(divElm);
 
 		console.timeEnd('calendar');
 	}
