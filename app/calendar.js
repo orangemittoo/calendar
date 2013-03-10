@@ -22,8 +22,9 @@
 				[23]
 			],
 			fMondayArr = [2, 1, 7, 6, 5, 4, 3],
-			src = '<style>table {border-collapse:collapse;border:1px #000 solid;margin-bottom:20px;}th,td{padding:5px;border:1px #000 solid;}.weeks {background: #ccc;}.t-sun {color:#f66;}.t-sat {color:#0ff}}.t-hol {color:#fff} .t-oth {color:#999}.bg-sun {background:#fcf}.bg-sat {background: #6ff}.bg-hol {background:#f66}</style>',
-			yArr, holidays, holidayObj, len, i , j, k, lenY, lenD, week, day, currentD, targetY, targetM ,prevM, tmpPrevM, isSun, isSat, cName, isOther;
+			src = '<style>table {border-collapse:collapse;border:1px #000 solid;margin-bottom:20px;}th,td{padding:5px;border:1px #000 solid;text-align:center}.weeks {background: #ccc;}.t-sun {color:#f66;}.t-sat {color:#0ff} .t-hol {color:#fff} .t-oth {color:#999}.bg-sun {background:#fcf}.bg-sat {background: #6ff}.bg-hol {background:#f66}</style>',
+			yArr, holidays, holidayObj, len, i , j, k, lenY, lenD, week, day, currentD,
+			targetY, targetM ,prevM, tmpPrevM, isSun, isSat, cName, isOther;
 
 		//10年分の情報を一つの配列に格納
 		//例： [[[2013,1,31,4,0], [2013,1,31,4,0]], [[2013,1,31,4,0], [2013,1,31,4,0]]]
@@ -44,20 +45,20 @@
 				holidayObj = {};
 				for(; j < len; j++){
 					day = holidays[j];
-					day = day === 100 ? 
-							sY%4 === 0 || sY%4 === 1 ? 
+						day = day === 100 ?
+							sY%4 === 0 || sY%4 === 1 ?
 								20 :
 								21 :
 							day;
-					day = day === 1000 ? 
-							sY%4 === 0 ? 
+					day = day === 1000 ?
+							sY%4 === 0 ?
 								22 :
 								23 :
 							day;
-					day = typeof day === 'number' ? 
-							new Date(sY, i, day).getDay() === 0 ? 
-								day + 1 : 
-								day : 
+					day = typeof day === 'number' ?
+							new Date(sY, i, day).getDay() === 0 ?
+								day + 1 :
+								day :
 							fMondayArr[week] + (7 * (day - 1));
 
 					holidayObj[day] = true;
@@ -104,10 +105,10 @@
 					isSat = k % 7 === 6;
 					cName = isSun ? 'bg-sun' : isSat ? 'bg-sat' : '';
 					cName += isOther ? ' t-oth' : '';
-					cName += holidays[day] && !isOther ? ' bg-hol' : '';
-					src += isSun ? '<tr>' : '';
-					src += (cName ? '<td class="'+cName+'">': '<td>') + day + '</td>';
-					src += isSat ? '</tr>' : '';
+					cName += holidays[day] && !isOther ? ' bg-hol t-hol' : '';
+					src += isSun ? '<tr>'+ (cName ? '<td class="'+cName+'">': '<td>') + day + '</td>'+ (isSat ? '</tr>' : '') : (cName ? '<td class="'+cName+'">': '<td>') + day + '</td>' + (isSat ? '</tr>' : '');
+					// src += (cName ? '<td class="'+cName+'">': '<td>') + day + '</td>';
+					// src += isSat ? '</tr>' : '';
 				}
 
 				src += '</table>';
